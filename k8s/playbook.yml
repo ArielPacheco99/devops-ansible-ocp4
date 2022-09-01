@@ -1,19 +1,17 @@
-- name: Demostrar modulos k8s
+- name: Demostrar módulos k8s
   hosts: localhost
   gather_facts: no
   connection: local
-  vars:
-    namespace: marianogbarbero --opernshift
     
   module_defaults:
     group/k8s:
       namespace: "{{ namespace }}"
-      api_key: ""help --logan tools --display token
-      host: 
+      api_key: "{{ api_key }}"
+      host: "{{ host_ocp }}"
    
-  tasks: 
+  tasks:
     - name: Crear los objetos del manifiesto
-      k8s: 
+      k8s:
         state: present
         src: "{{ playbook_dir + '/hello.yml' }}"
         
@@ -26,18 +24,18 @@
           - port: 8080
             protocol: TCP
             
-    - name: Obtener informacion de los pods
+    - name: Obtener información de los pods
       k8s_info:
         kind: Pod
         label_selectors:
           - app = nodejs-ex
           
     - name: Exponer https con ClusterIP
-      k8s_services:
+      k8s_service:
         state: present
         name: nodejs-ex
         ports:
           - port: 443
             protocol: TCP
         selector:
-         app: nodejs-ex
+          app: nodejs-ex
